@@ -3,116 +3,184 @@
     <el-form
       ref="loginForm"
       :model="loginForm"
-      :rules="loginRules"
+      :rules="loginFormRules"
       class="login-form"
       auto-complete="on"
-      label-position="left"
     >
+      <!-- logo图片-->
+      <img src="@/assets/imgs/dkd-logo.png" alt="" class="login-logo" />
+      <!-- 表单 ------------------------------------>
 
-      <div class="imgLogo"><img src="@/assets/imgs/dkd-logo.png" alt=""></div>
-
-      <el-form-item prop="username">
+      <!-- 手机号 -->
+      <el-form-item prop="loginName">
+        <span class="iconfont dkd-shouji"></span>
         <el-input
-          ref="username"
-          v-model="loginForm.username"
-          placeholder="Username"
-          name="username"
+          ref="loginName"
+          v-model="loginForm.loginName"
+          placeholder="请输入账号"
+          name="loginName"
           type="text"
-          tabindex="1"
           auto-complete="on"
+          maxlength="18"
         />
       </el-form-item>
 
+      <!-- 密码 -->
       <el-form-item prop="password">
-        <!-- <span class="svg-container">
-          <svg-icon icon-class="password" />
-        </span> -->
+        <span class="iconfont dkd-suoding"></span>
         <el-input
           :key="passwordType"
           ref="password"
           v-model="loginForm.password"
           :type="passwordType"
-          placeholder="Password"
+          placeholder="请输入密码"
           name="password"
-          tabindex="2"
           auto-complete="on"
-          @keyup.enter.native="handleLogin"
-        />
-        <!-- <span class="show-pwd" @click="showPwd">
-          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-        </span> -->
-      </el-form-item>
-
-      <el-form-item prop="validateCode">
-        <!-- <span class="svg-container">
-          <svg-icon icon-class="password" />
-        </span>
-        <el-input
-          :key="passwordType"
-          ref="password"
-          v-model="loginForm.password"
-          :type="passwordType"
-          placeholder="Password"
-          name="password"
-          tabindex="2"
-          auto-complete="on"
-          @keyup.enter.native="handleLogin"
+          maxlength="20"
         />
         <span class="show-pwd" @click="showPwd">
-          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-        </span> -->
+          <svg-icon
+            :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
+          />
+        </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" @click.native.prevent="handleLogin">登录</el-button>
-
+      <!-- 验证码 -->
+      <el-row>
+        <el-col :span="17">
+          <el-form-item prop="imgcode">
+            <span class="iconfont dkd-anquanzhongxin"></span>
+            <el-input
+              ref="code"
+              v-model="loginForm.code"
+              placeholder="请输入验证码"
+              name="code"
+              type="text"
+              auto-complete="on"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="7"
+          ><div class="yzm" @click="clickCode">
+            <img :src="responseURL" alt="" />
+          </div>
+        </el-col>
+      </el-row>
+      <!-- 登录按钮 -->
+      <el-button
+        class="loginBtn"
+        v-loading.fullscreen.lock="loading"
+        element-loading-text="拼命加载中"
+        element-loading-spinner="el-icon-loading"
+        type="primary"
+        style="width: 100%; margin-bottom: 30px"
+        @click.native.prevent="login"
+        >登录</el-button
+      >
     </el-form>
   </div>
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
-
+import { sendImgCode } from '@/api'
 export default {
   name: 'Login',
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
-      } else {
-        callback()
-      }
-    }
-    const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
-      } else {
-        callback()
-      }
-    }
     return {
       loginForm: {
-        username: 'admin',
+        loginName: 'admin',
         password: 'admin',
-        validateCode: ''
+        code: '',
       },
-      loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+      loginFormRules: {
+        loginName: [{ required: true, message: '请输入账号', trigger: 'blur' }],
+        password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+        code: [{ required: true, message: '请输入验证码', trigger: 'blur' }],
       },
       loading: false,
       passwordType: 'password',
-      redirect: undefined
+      responseURL: '',
+      clientToken: '',
     }
   },
-  watch: {
-    $route: {
-      handler: function(route) {
-        this.redirect = route.query && route.query.redirect
-      },
-      immediate: true
-    }
+  created() {
+    this.sendImgCode()
   },
   methods: {
+    // 得到请求随机数
+    getclientToken() {
+      var arr = [
+        '0',
+        '1',
+        '2',
+        '3',
+        '4',
+        '5',
+        '6',
+        '7',
+        '8',
+        '9',
+        'A',
+        'B',
+        'C',
+        'D',
+        'E',
+        'F',
+        'G',
+        'H',
+        'I',
+        'J',
+        'K',
+        'L',
+        'M',
+        'N',
+        'O',
+        'P',
+        'Q',
+        'R',
+        'S',
+        'T',
+        'U',
+        'V',
+        'W',
+        'X',
+        'Y',
+        'Z',
+        'a',
+        'b',
+        'c',
+        'd',
+        'e',
+        'f',
+        'g',
+        'h',
+        'i',
+        'j',
+        'k',
+        'l',
+        'm',
+        'n',
+        'o',
+        'p',
+        'q',
+        'r',
+        's',
+        't',
+        'u',
+        'v',
+        'w',
+        'x',
+        'y',
+        'z',
+      ]
+      var client_token = ''
+      for (var i = 0; i < 32; i++) {
+        var id = parseInt(Math.random() * (arr.length - 1))
+        client_token += arr[id]
+      }
+      return client_token
+    },
+    // 显示与隐藏密码
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -123,212 +191,185 @@ export default {
         this.$refs.password.focus()
       })
     },
-    handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
-            this.loading = false
-          }).catch(() => {
-            this.loading = false
-          })
-        } else {
-          console.log('error submit!!')
-          return false
+    // 登录
+    async login() {
+      try {
+        await this.$refs.loginForm.validate()
+        this.loading = true
+        const data = {
+          loginName: this.loginForm.loginName,
+          password: this.loginForm.password,
+          code: this.loginForm.code,
+          clientToken: this.clientToken,
+          loginType: 0,
         }
-      })
-    }
-  }
+        this.$store.dispatch('user/getToken', data)
+      } catch (err) {
+        this.$message({
+          message: '登录失败',
+          type: 'error',
+        })
+      } finally {
+        this.loading = false
+      }
+    },
+    // 请求图片验证码
+    async sendImgCode() {
+      try {
+        this.clientToken = this.getclientToken()
+        console.log(this.clientToken)
+        const res = await sendImgCode(this.clientToken)
+        // console.log(res.request.responseURL)
+        this.responseURL = res.request.responseURL
+      } catch (err) {
+        this.$message({
+          message: '请求图片验证码失败，请重试',
+          type: 'error',
+        })
+      }
+    },
+    // 点击图片再次请求图片验证码
+    clickCode() {
+      this.sendImgCode()
+    },
+  },
 }
 </script>
 
 <style lang="scss">
-// /* 修复input 背景不协调 和光标变色 */
-// /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
+/* 修复input 背景不协调 和光标变色 */
+/* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
-// $bg:#283443;
-// $light_gray:#fff;
-// $cursor: #fff;
+// $bg: #283443;
+$light_gray: #999;
+$cursor: #999;
 
-// @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
-//   .login-container .el-input input {
-//     color: $cursor;
-//   }
-// }
-
-/* reset element-ui css */
-// .login-container {
-//   .el-input {
-//     display: inline-block;
-//     height: 47px;
-//     width: 85%;
-
-//     input {
-//       background: transparent;
-//       border: 0px;
-//       -webkit-appearance: none;
-//       border-radius: 0px;
-//       padding: 12px 5px 12px 15px;
-//       color: $light_gray;
-//       height: 47px;
-//       caret-color: $cursor;
-
-//       &:-webkit-autofill {
-//         box-shadow: 0 0 0px 1000px $bg inset !important;
-//         -webkit-text-fill-color: $cursor !important;
-//       }
-//     }
-//   }
-
-//   .el-form-item {
-//     border: 1px solid rgba(255, 255, 255, 0.1);
-//     background: rgba(0, 0, 0, 0.1);
-//     border-radius: 5px;
-//     color: #454545;
-//   }
-// }
-</style>
-
-<style lang="scss" scoped>
-// $bg:#2d3a4b;
-// $dark_gray:#889aa4;
-// $light_gray:#eee;
-
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100%;
-  width: 100%;
-  background: url('../../assets/imgs/dkd-bg.png') no-repeat 0 0 / cover;
-  // background-color: $bg;
-  // overflow: hidden;
-
-  .login-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    background-color: #fff;
-    padding-top: 76px;
-    width: 518px;
-    height: 388px;
-    // max-width: 100%;
-    // overflow: hidden;
-    box-shadow: 0 3px 70px 0 rgb(30 111 72 / 35%);
-    border-radius: 10px;
-    box-sizing: border-box;
-
-    .imgLogo {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: absolute;
-      top: -42px;
-      left: 215px;
-      width: 88px;
-      height: 88px;
-      border-radius: 50%;
-      background-color: #fff;
-      // border: 1px solid red;
-      img {
-        width: 110%;
-        height: 110%;
-        border-style: none
-      }
-    }
-    .el-form-item {
-      // display: flex;
-      // align-items: center;
-      width: 446px;
-      height: 52px;
-      margin-bottom: 24px;
-      background: #fff;
-      border: 1px solid #e2e2e2;
-      border-radius: 4px;
-      .el-form-item__content {
-        // display: flex;
-        // align-items: center;
-        font-size: 14px;
-       .el-input {
-          flex: 1;
-          height: 100%;
-          .el-input__inner {
-            height: 47px;
-            background: transparent;
-            border: 1px solid #fff;
-            border-radius: 0;
-            padding: 12px 5px 12px 15px;
-            color: #999;
-            caret-color: #999;
-            -webkit-appearance: none;
-          }
-          // background-color: blue;
-       }
-      }
-
-    // .svg-container{
-    // padding: 6px 5px 6px 15px;
-    // color: #889aa4;
-    // vertical-align: middle;
-    // width: 30px;
-    // display: inline-block;
-    // }
-      // }
-    }
-    .el-button {
-      width: 446px;
-      height: 52px;
-      background: linear-gradient(262deg,#2e50e1,#6878f0);
-      opacity: .91;
-      border-radius: 8px;
-      color: #fff;
-      text-shadow: 0 7px 22px #cfcfcf;
-    }
+@supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
+  .login-container .el-input input {
+    color: $cursor;
   }
 }
 
-  // .tips {
-  //   font-size: 14px;
-  //   color: #fff;
-  //   margin-bottom: 10px;
+/* reset element-ui css */
+.login-container {
+  .el-input {
+    display: inline-block;
+    height: 47px;
+    width: 85%;
 
-  //   span {
-  //     &:first-of-type {
-  //       margin-right: 16px;
-  //     }
-  //   }
-  // }
+    input {
+      background: transparent;
+      border: 0;
+      -webkit-appearance: none;
+      border-radius: 0px;
+      padding: 12px 5px 12px 15px;
+      color: $light_gray;
+      height: 47px;
+      caret-color: $cursor;
 
-  // .svg-container {
-  //   padding: 6px 5px 6px 15px;
-  //   // color: $dark_gray;
-  //   vertical-align: middle;
-  //   width: 30px;
-  //   display: inline-block;
-  // }
+      &:-webkit-autofill {
+        // box-shadow: 0 0 0px 1000px $bg inset !important;
+        -webkit-text-fill-color: $cursor !important;
+      }
+    }
+  }
 
-  // .title-container {
-  //   position: relative;
+  .el-form-item__error {
+    color: red;
+  }
+}
+</style>
 
-  //   .title {
-  //     font-size: 26px;
-  //     // color: $light_gray;
-  //     margin: 0px auto 40px auto;
-  //     text-align: center;
-  //     font-weight: bold;
-  //   }
-  // }
+<style lang="scss" scoped>
+$bg: #2d3a4b;
+$dark_gray: #889aa4;
+$light_gray: #999; 
 
-  // .show-pwd {
-  //   position: absolute;
-  //   right: 10px;
-  //   top: 7px;
-  //   font-size: 16px;
-  //   // color: $dark_gray;
-  //   cursor: pointer;
-  //   user-select: none;
-  // }
+.login-container {
+  min-height: 100%;
+  width: 100%;
+  background: url('~@/assets/imgs/dkd-bg.png') no-repeat 0 0 / cover;
+  //   background-color: $bg;
+  //   overflow: hidden;
+  // 登录框
+  .login-form {
+    position: absolute;
+    width: 518px;
+    height: 388px;
+    top: 50%;
+    left: 50%;
+    margin-top: -194px;
+    margin-left: -259px;
+    padding: 76px 35px 0;
+    background: #fff;
+    -webkit-box-shadow: 0 3px 70px 0 rgb(30 111 72 / 35%);
+    box-shadow: 0 3px 70px 0 rgb(30 111 72 / 35%);
+    border-radius: 10px;
+    // logo图片
+    .login-logo {
+      position: absolute;
+      width: 96px;
+      height: 96px;
+      top: -46px;
+      left: 50%;
+      margin-left: -48px;
+    }
+    // 验证码
+    .yzm {
+      //   border: 1px solid blue;
+      height: 52px;
+      img {
+        width: 100%;
+      }
+    }
+  }
+  .iconfont {
+    padding: 6px 5px 6px 15px;
+    color: #889aa4;
+    vertical-align: middle;
+    width: 30px;
+    display: inline-block;
+    font-size: 18px;
+    &.dkd-suoding {
+      font-size: 25px;
+      padding: 6px 5px 6px 10px;
+    }
+    &.dkd-anquanzhongxin {
+      font-size: 17px;
+    }
+  }
 
+  .show-pwd {
+    position: absolute;
+    right: 10px;
+    top: 7px;
+    font-size: 16px;
+    color: $dark_gray;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .loginBtn {
+    width: 100%;
+    height: 52px;
+    background: linear-gradient(262deg, #2e50e1, #6878f0);
+    opacity: 0.91;
+    border-radius: 8px;
+    color: #fff;
+    text-shadow: 0 7px 22px #cfcfcf;
+  }
+  .el-form-item {
+    width: 100%;
+    height: 52px;
+    margin-bottom: 24px;
+    background: #fff;
+    border: 1px solid #e2e2e2;
+    border-radius: 4px;
+    .el-form-item__content {
+      line-height: 40px;
+      position: relative;
+      font-size: 14px;
+    }
+  }
+}
 </style>

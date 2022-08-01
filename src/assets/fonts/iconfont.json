@@ -1,0 +1,30 @@
+{
+  "id": "3559281",
+  "name": "帝可得",
+  "font_family": "iconfont",
+  "css_prefix_text": "dkd-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "2076279",
+      "name": " 安全中心",
+      "font_class": "anquanzhongxin",
+      "unicode": "e895",
+      "unicode_decimal": 59541
+    },
+    {
+      "icon_id": "8288872",
+      "name": "手机",
+      "font_class": "shouji",
+      "unicode": "e853",
+      "unicode_decimal": 59475
+    },
+    {
+      "icon_id": "26135778",
+      "name": "锁定",
+      "font_class": "suoding",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
+    }
+  ]
+}

@@ -1,24 +1,24 @@
 import request from '@/utils/request'
-
+/**
+ * 登录
+ * @param {*} data 
+ * @returns promise
+ */
 export function login(data) {
   return request({
-    url: '/vue-admin-template/user/login',
-    method: 'post',
-    data
+    url: '/user-service/user/login',
+    method: 'POST',
+    data,
   })
 }
 
-export function getInfo(token) {
+/**
+ * 图片验证码
+ * @param {*} clientToken 请求随机数
+ * @returns promise
+ */
+export function sendImgCode(clientToken) {
   return request({
-    url: '/vue-admin-template/user/info',
-    method: 'get',
-    params: { token }
-  })
-}
-
-export function logout() {
-  return request({
-    url: '/vue-admin-template/user/logout',
-    method: 'post'
+    url: `/user-service/user/imageCode/${clientToken}`
   })
 }
