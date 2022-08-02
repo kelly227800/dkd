@@ -1,32 +1,25 @@
 import { login } from '@/api'
-import { Message } from 'element-ui';
-import router from '@/router';
-
 export default {
   namespaced: true,
   state: {
-    token: "",
+    token: '',
   },
   mutations: {
     setToken(state, payload) {
-      state.token = payload;
+      state.token = payload
     },
-  },
-  actions: {
-    async getToken(context,payload) {
-      const res = await login(payload)
-      console.log(res);
-      if(res.data.token) {
-        context.commit('setToken', res.data.token);
-        router.push('/home')
-      } else {
-        Message({
-          message: res.data.msg,
-          type: 'error',
-        })
-      }
-      
+    clearToken(state) {
+      state.token = ''
     }
   },
-};
-
+  actions: {
+    async getToken(context, payload) {
+      const res = await login(payload)
+      console.log(res)
+      context.commit('setToken', res.token)
+    },
+    logout(context) {
+      context.commit('clearToken')
+    }
+  },
+}

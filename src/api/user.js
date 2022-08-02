@@ -1,11 +1,13 @@
-import request from '@/utils/request'
+import requests from '@/utils/request'
 /**
  * 登录
  * @param {*} data 
  * @returns promise
  */
+const request1 = requests.service
+const request2 = requests.request
 export function login(data) {
-  return request({
+  return request1({
     url: '/user-service/user/login',
     method: 'POST',
     data,
@@ -18,7 +20,7 @@ export function login(data) {
  * @returns promise
  */
 export function sendImgCode(clientToken) {
-  return request({
+  return request2({
     url: `/user-service/user/imageCode/${clientToken}`
   })
 }

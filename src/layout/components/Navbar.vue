@@ -1,136 +1,96 @@
 <template>
   <div class="navbar">
-    <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
-
-    <breadcrumb class="breadcrumb-container" />
-
+    <img src="@/assets/imgs/layout-logo.png" alt="" class="logo" />
     <div class="right-menu">
-      <el-dropdown class="avatar-container" trigger="click">
-        <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
-          <i class="el-icon-caret-bottom" />
-        </div>
-        <el-dropdown-menu slot="dropdown" class="user-dropdown">
-          <router-link to="/">
-            <el-dropdown-item>
-              Home
-            </el-dropdown-item>
-          </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
-            <el-dropdown-item>Github</el-dropdown-item>
-          </a>
-          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
-            <el-dropdown-item>Docs</el-dropdown-item>
-          </a>
-          <el-dropdown-item divided @click.native="logout">
-            <span style="display:block;">Log Out</span>
-          </el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
+      <el-row type="flex" align="middle">
+        <el-col :span="5"
+          ><div class="avatar">
+            <img src="@/assets/imgs/layout-avatar.png" alt="" /></div
+        ></el-col>
+        <el-col :span="14"
+          ><div class="welcome">
+            <span>欢迎您，admin</span>
+          </div></el-col
+        >
+        <el-col :span="5">
+          <el-tooltip
+            class="item"
+            effect="dark"
+            content="退出登录"
+            placement="bottom"
+          >
+            <el-button @click.native="logout"
+              >退出<span class="el-icon-caret-bottom"></span
+            ></el-button> </el-tooltip
+        ></el-col>
+      </el-row>
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import Breadcrumb from '@/components/Breadcrumb'
-import Hamburger from '@/components/Hamburger'
-
 export default {
-  components: {
-    Breadcrumb,
-    Hamburger
-  },
-  computed: {
-    ...mapGetters([
-      'sidebar',
-      'avatar'
-    ])
-  },
   methods: {
-    toggleSideBar() {
-      this.$store.dispatch('app/toggleSideBar')
-    },
-    async logout() {
-      await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    logout() {
+      this.$store.dispatch('user/logout')
+      this.$router.push('/login')
     }
-  }
+  },
 }
 </script>
 
 <style lang="scss" scoped>
 .navbar {
-  height: 50px;
-  overflow: hidden;
-  position: relative;
-  background: #fff;
-  box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  height: 60px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 1999;
+  background-image: url('~@/assets/imgs/layout-bg.png');
+  background-size: cover;
+  background-repeat: no-repeat;
 
-  .hamburger-container {
-    line-height: 46px;
-    height: 100%;
-    float: left;
-    cursor: pointer;
-    transition: background .3s;
-    -webkit-tap-highlight-color:transparent;
-
-    &:hover {
-      background: rgba(0, 0, 0, .025)
-    }
-  }
-
-  .breadcrumb-container {
-    float: left;
+  .logo {
+    width: 88px;
+    position: relative;
+    top: 4px;
+    margin-top: 6px;
+    margin-left: 15px;
   }
 
   .right-menu {
     float: right;
+    width: 240px;
     height: 100%;
-    line-height: 50px;
+    margin-right: 24px;
+    font-size: 16px;
+    color: #fff;
 
-    &:focus {
-      outline: none;
-    }
-
-    .right-menu-item {
-      display: inline-block;
-      padding: 0 8px;
-      height: 100%;
-      font-size: 18px;
-      color: #5a5e66;
-      vertical-align: text-bottom;
-
-      &.hover-effect {
-        cursor: pointer;
-        transition: background .3s;
-
-        &:hover {
-          background: rgba(0, 0, 0, .025)
+    .el-row {
+      box-sizing: border-box;
+      .avatar {
+        height: 60px;
+        line-height: 60px;
+        img {
+          margin-top: 12px;
         }
       }
-    }
-
-    .avatar-container {
-      margin-right: 30px;
-
-      .avatar-wrapper {
-        margin-top: 5px;
-        position: relative;
-
-        .user-avatar {
-          cursor: pointer;
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
-        }
-
+      .welcome {
+        height: 60px;
+        line-height: 60px;
+        cursor: pointer;
+      }
+      .item {
+        margin-left: -20px;
+        height: 60px;
+        background: unset;
+        color: #fff;
+        border: none;
+        font-size: 16px;
         .el-icon-caret-bottom {
-          cursor: pointer;
-          position: absolute;
-          right: -20px;
-          top: 25px;
-          font-size: 12px;
+          width: 16px;
+          height: 16px;
         }
       }
     }

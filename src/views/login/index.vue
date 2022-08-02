@@ -48,7 +48,7 @@
       <!-- 验证码 -->
       <el-row>
         <el-col :span="17">
-          <el-form-item prop="imgcode">
+          <el-form-item prop="code">
             <span class="iconfont dkd-anquanzhongxin"></span>
             <el-input
               ref="code"
@@ -69,9 +69,7 @@
       <!-- 登录按钮 -->
       <el-button
         class="loginBtn"
-        v-loading.fullscreen.lock="loading"
-        element-loading-text="拼命加载中"
-        element-loading-spinner="el-icon-loading"
+        :loading="loading"
         type="primary"
         style="width: 100%; margin-bottom: 30px"
         @click.native.prevent="login"
@@ -193,9 +191,9 @@ export default {
     },
     // 登录
     async login() {
+      this.loading = true
       try {
         await this.$refs.loginForm.validate()
-        this.loading = true
         const data = {
           loginName: this.loginForm.loginName,
           password: this.loginForm.password,
@@ -203,12 +201,9 @@ export default {
           clientToken: this.clientToken,
           loginType: 0,
         }
-        this.$store.dispatch('user/getToken', data)
-      } catch (err) {
-        this.$message({
-          message: '登录失败',
-          type: 'error',
-        })
+        await this.$store.dispatch('user/getToken', data)
+        this.$router.push('/home')
+        this.$message.success('登录成功')
       } finally {
         this.loading = false
       }
@@ -217,9 +212,10 @@ export default {
     async sendImgCode() {
       try {
         this.clientToken = this.getclientToken()
-        console.log(this.clientToken)
+        // console.log(this.clientToken)
         const res = await sendImgCode(this.clientToken)
         // console.log(res.request.responseURL)
+        console.log(res)
         this.responseURL = res.request.responseURL
       } catch (err) {
         this.$message({
