@@ -216,7 +216,7 @@ export default {
         const res = await sendImgCode(this.clientToken)
         // console.log(res.request.responseURL)
         // console.log(res)
-        this.responseURL = res
+        this.responseURL = res.request.responseURL
       } catch (err) {
         this.$message({
           message: '请求图片验证码失败，请重试',
@@ -279,7 +279,7 @@ $cursor: #999;
 <style lang="scss" scoped>
 $bg: #2d3a4b;
 $dark_gray: #889aa4;
-$light_gray: #999; 
+$light_gray: #999;
 
 .login-container {
   min-height: 100%;

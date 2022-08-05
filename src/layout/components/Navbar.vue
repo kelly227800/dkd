@@ -5,11 +5,14 @@
       <el-row type="flex" align="middle">
         <el-col :span="5"
           ><div class="avatar">
-            <img src="@/assets/imgs/layout-avatar.png" alt="" /></div
+            <img
+              src="@/assets/imgs/layout-avatar.png"
+              alt=""
+            /></div
         ></el-col>
         <el-col :span="14"
           ><div class="welcome">
-            <span>欢迎您，admin</span>
+            <span>欢迎您，{{ $store.state.user.userInfo.userName }}</span>
           </div></el-col
         >
         <el-col :span="5">
@@ -29,16 +32,19 @@
 </template>
 
 <script>
+import defaultImg from "@/assets/imgs/mydog.jpeg";
 export default {
+  data() {
+    return {
+      defaultImg,
+    }
+  },
   methods: {
     logout() {
       this.$store.dispatch('user/logout')
       this.$router.push('/login')
-    }
+    },
   },
-  //   created() {
-  //   this.$store.dispatch('user/getUserInformation', this.$store.state.user.userId)
-  // },
 }
 </script>
 

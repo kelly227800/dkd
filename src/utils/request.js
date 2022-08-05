@@ -8,7 +8,7 @@ function isTimeOUt() {
   const currentTime = Date.now()
   const tokenTime = getTokenTime()
   const timeout = 2 * 60 * 1000
-  console.log(currentTime - tokenTime > timeout)
+  // console.log(currentTime - tokenTime > timeout)
   return currentTime - tokenTime > timeout
 }
 // create an axios instance
@@ -22,6 +22,7 @@ service.interceptors.request.use(
       if (isTimeOUt()) {
         await store.dispatch('user/logout')
         router.push('/login')
+        Message.error('登录过期')
         return Promise.reject(new Error('登录过期'))
       }
       config.headers['Authorization'] = store.state.user.token
@@ -33,32 +34,29 @@ service.interceptors.request.use(
   },
 )
 // 响应拦截器
-service.interceptors.response.use(
-  (res) => {
-    if (res.config.url.includes('/api/user-service/user/imageCode/')) {
-      return res.request.responseURL
-    }
-    const {
-      data,
-      data: { success, msg },
-    } = res
-    if (success) {
-      return data
-    }
-    Message.error(msg)
-    return Promise.reject(new Error(msg))
-  },
-  async function (error) {
-    if (error?.response?.status === 401) {
-      Message.error('登录过期')
-      await store.dispatch('user/logout')
-      router.push('/login')
-    } else {
-      console.log(error)
-      Message.error(error.message)
-    }
-    return Promise.reject(error)
-  },
-)
+// service.interceptors.response.use(
+//   (res) => {
+//     if (res.config.url.includes('/api/user-service/user/imageCode/')) {
+//       return res.request.responseURL
+//     }
+//     const { data } = res
+//     if (data.success || data.status) {
+//       return data
+//     }
+//     Message.error("请求失败")
+//     return Promise.reject(new Error())
+//   },
+//   async function (error) {
+//     if (error?.response?.status === 401) {
+//       Message.error('登录过期')
+//       await store.dispatch('user/logout')
+//       router.push('/login')
+//     } else {
+//       // console.log(error)
+//       Message.error(error.message)
+//     }
+//     return Promise.reject(error)
+//   },
+// )
 
 export default service

@@ -34,6 +34,9 @@ export default {
     },
   },
   methods: {},
+  created() {
+    this.$store.dispatch('user/getUserInformation')
+  }
 }
 </script>
 

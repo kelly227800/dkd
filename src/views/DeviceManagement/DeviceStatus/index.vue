@@ -1,25 +1,41 @@
 <template>
-  <h1>设备状态</h1>
+  <!-- <h1>运营工单</h1> -->
+  <div>
+    <div class="search">
+      <SearchBox
+        isBasic
+        inputLabel="设备编号:"
+        inputPlaceholder="请输入"
+        haveBtn
+      />
+    </div>
+  </div>
 </template>
 
 <script>
+import SearchBox from '@/components/SearchBox'
 export default {
-  data () {
+  data() {
     return {
-
     }
   },
-
-  created () {
-
+  components: {
+    SearchBox,
   },
+  created() {},
 
-  methods: {
-
-  }
+  methods: {},
 }
 </script>
 
 <style scoped>
-
+.search {
+  display: flex;
+  height: 64px;
+  align-items: center;
+  padding-top: 22px;
+  margin-bottom: 20px;
+  padding-left: 17px;
+  background-color: #fff;
+}
 </style>

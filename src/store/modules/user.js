@@ -1,19 +1,21 @@
 import { login, getUserInfo } from '@/api'
 import { setTokenTime } from '@/utils/auth'
+// import { Message } from 'element-ui'
+import Router from '@/router'
 export default {
   namespaced: true,
   state: {
     token: '',
-    // userId: '',
+    userId: '',
     userInfo: {},
   },
   mutations: {
     setToken(state, payload) {
       state.token = payload
     },
-    // setUserId(state, payload) {
-    //   state.userId = payload
-    // },
+    setUserId(state, payload) {
+      state.userId = payload
+    },
     setUserInfo(state, payload) {
       state.userInfo = payload
     },
@@ -21,27 +23,24 @@ export default {
   actions: {
     async getToken(context, payload) {
       const res = await login(payload)
-      console.log(res)
-      context.commit('setToken', res.token)
-      // context.commit('setUserId', res.userId)
-      setTokenTime()
+      // console.log(context)
+        context.commit('setToken', res.data.token)
+        context.commit('setUserId', res.data.userId)
+        setTokenTime()
     },
-    // async getUserId(context, payload) {
-    //   const res = await login(payload)
-    //   console.log(res)
-    //   context.commit('setUserId', res.userId)
-    // },
     // 退出登录
     logout(context) {
       context.commit('setToken', '')
-      // context.commit('setUserId', '')
+      context.commit('setUserId', '')
       context.commit('setUserInfo', {})
     },
     // 获取用户信息
-    // async getUserInformation(context, payload) {
-    //   const res = await getUserInfo(payload)
-    //   console.log(res)
-    //   context.commit('setUserInfo', res)
-    // },
+    async getUserInformation(context) {
+      // console.log(context)
+      // console.log(1)
+      const res = await getUserInfo(context.state.userId)
+      console.log(res)
+      context.commit('setUserInfo', res.data)
+    },
   },
 }

@@ -22,17 +22,17 @@ export default {
   width: 100%;
   height: 100%;
   background-color: #f8fafd;
-  padding-top: 60px;
-  padding-left: 20px;
+  padding: 20px;
+  padding-top: 80px;
   margin-left: 167px;
 }
 </style>
 
 <style lang="scss">
 // fix css style bug in open el-dialog
-.el-popup-parent--hidden {
-  .fixed-header {
-    padding-right: 15px;
-  }
-}
+// .el-popup-parent--hidden {
+//   .fixed-header {
+//     padding-right: 15px;
+//   }
+// }
 </style>

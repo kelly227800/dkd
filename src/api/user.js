@@ -30,8 +30,8 @@ export function sendImgCode(clientToken) {
  * @param {*} id 用户id
  * @returns promise
  */
-// export function getUserInfo(id) {
-//   return request({
-//     url: `/user-service/user/${id}`,
-//   })
-// }
+export function getUserInfo(id) {
+  return request({
+    url: `/user-service/user/${id}`,
+  })
+}
