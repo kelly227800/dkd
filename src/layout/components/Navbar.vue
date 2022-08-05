@@ -36,6 +36,9 @@ export default {
       this.$router.push('/login')
     }
   },
+  //   created() {
+  //   this.$store.dispatch('user/getUserInformation', this.$store.state.user.userId)
+  // },
 }
 </script>
 
@@ -46,7 +49,7 @@ export default {
   position: fixed;
   top: 0;
   right: 0;
-  z-index: 1999;
+  z-index: 2002;
   background-image: url('~@/assets/imgs/layout-bg.png');
   background-size: cover;
   background-repeat: no-repeat;

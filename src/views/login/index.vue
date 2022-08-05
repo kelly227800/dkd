@@ -215,8 +215,8 @@ export default {
         // console.log(this.clientToken)
         const res = await sendImgCode(this.clientToken)
         // console.log(res.request.responseURL)
-        console.log(res)
-        this.responseURL = res.request.responseURL
+        // console.log(res)
+        this.responseURL = res
       } catch (err) {
         this.$message({
           message: '请求图片验证码失败，请重试',

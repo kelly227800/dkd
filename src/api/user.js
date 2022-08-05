@@ -1,13 +1,13 @@
-import requests from '@/utils/request'
+import request from '@/utils/request'
 /**
  * 登录
- * @param {*} data 
+ * @param {*} data
  * @returns promise
  */
-const request1 = requests.service
-const request2 = requests.request
+// const request1 = requests.service
+// const request2 = requests.request
 export function login(data) {
-  return request1({
+  return request({
     url: '/user-service/user/login',
     method: 'POST',
     data,
@@ -20,7 +20,18 @@ export function login(data) {
  * @returns promise
  */
 export function sendImgCode(clientToken) {
-  return request2({
-    url: `/user-service/user/imageCode/${clientToken}`
+  return request({
+    url: `/user-service/user/imageCode/${clientToken}`,
   })
 }
+
+/**
+ * 获取用户基本信息
+ * @param {*} id 用户id
+ * @returns promise
+ */
+// export function getUserInfo(id) {
+//   return request({
+//     url: `/user-service/user/${id}`,
+//   })
+// }

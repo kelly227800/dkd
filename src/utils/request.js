@@ -1,20 +1,30 @@
 import axios from 'axios'
-import { Message } from 'element-ui'
+import router from '@/router'
 import store from '@/store'
+import { Message } from 'element-ui'
+import { getTokenTime } from './auth'
 
+function isTimeOUt() {
+  const currentTime = Date.now()
+  const tokenTime = getTokenTime()
+  const timeout = 2 * 60 * 1000
+  console.log(currentTime - tokenTime > timeout)
+  return currentTime - tokenTime > timeout
+}
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
-  timeout: 5000,
 })
-const request = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-  timeout: 5000,
-})
+// 请求拦截器
 service.interceptors.request.use(
-  (config) => {
+  async (config) => {
     if (store.state.user.token) {
-      config.headers['Authorization'] = `Bearer ${store.state.user.token}`
+      if (isTimeOUt()) {
+        await store.dispatch('user/logout')
+        router.push('/login')
+        return Promise.reject(new Error('登录过期'))
+      }
+      config.headers['Authorization'] = store.state.user.token
     }
     return config
   },
@@ -22,8 +32,12 @@ service.interceptors.request.use(
     return Promise.reject(error)
   },
 )
+// 响应拦截器
 service.interceptors.response.use(
   (res) => {
+    if (res.config.url.includes('/api/user-service/user/imageCode/')) {
+      return res.request.responseURL
+    }
     const {
       data,
       data: { success, msg },
@@ -34,30 +48,17 @@ service.interceptors.response.use(
     Message.error(msg)
     return Promise.reject(new Error(msg))
   },
-  function (error) {
-    // console.log(err)
-    Message.error('系统异常')
+  async function (error) {
+    if (error?.response?.status === 401) {
+      Message.error('登录过期')
+      await store.dispatch('user/logout')
+      router.push('/login')
+    } else {
+      console.log(error)
+      Message.error(error.message)
+    }
     return Promise.reject(error)
   },
 )
 
-// service.interceptors.request.use(
-//   config => {
-//     // do something before request is sent
-
-//     if (store.getters.token) {
-//       // let each request carry token
-//       // ['X-Token'] is a custom headers key
-//       // please modify it according to the actual situation
-//       config.headers['X-Token'] = getToken()
-//     }
-//     return config
-//   },
-//   error => {
-//     // do something with request error
-//     console.log(error) // for debug
-//     return Promise.reject(error)
-//   }
-// )
-
-export default { service, request }
+export default service

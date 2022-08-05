@@ -1,12 +1,12 @@
-// import defaultSettings from '@/settings'
+import defaultSettings from '@/settings'
 
-// const { showSettings, fixedHeader, sidebarLogo } = defaultSettings
+const { fixedHeader } = defaultSettings
 
-// const state = {
+const state = {
 //   showSettings: showSettings,
-//   fixedHeader: fixedHeader,
+  fixedHeader: fixedHeader,
 //   sidebarLogo: sidebarLogo
-// }
+}
 
 // const mutations = {
 //   CHANGE_SETTING: (state, { key, value }) => {
@@ -23,10 +23,10 @@
 //   }
 // }
 
-// export default {
-//   namespaced: true,
-//   state,
+export default {
+  namespaced: true,
+  state,
 //   mutations,
 //   actions
-// }
+}
 
